@@ -61,6 +61,8 @@ void Create(){
 void Show() {
     FILE *fp;
     State s;
+    State mas[SIZE-1];
+    int counter = 0;
 
     fp=fopen( "t.txt", "rb");
     if (fp==NULL) exit(3);
@@ -70,27 +72,59 @@ void Show() {
     return;
 }
 
-void Delete(string name){
+void Delete(string stateToDel){
+    FILE *fp;
+    State s;
+    State mas[SIZE-1];
+    int counter = 0;
 
+    fp=fopen( "t.txt", "rb");
+    if (fp==NULL) exit(3);
+    else while (fread(&s, sizeof(State),1,fp)) if (s.name != stateToDel)  mas[counter++]=s;
+    fclose(fp);
+
+    fp=fopen("t.txt", "wb");
+    if (fp==NULL) exit(1);
+    else for (int i=0;i<counter;i++) fwrite(&mas[i], sizeof(State),1,fp);
+    fclose(fp);
+    return;
 }
 
-
-
 void Add() {
+    State s1,s2;
+    FILE *fp;
 
+    s1 = {"Turkey", "Turkish", "TRY", 0.02};
+    s2 = {"Sweden", "Swedish", "SEC", 0.1};
+
+
+    fp=fopen( "t.txt", "ab");
+    if (fp==NULL) exit(3);
+    else {
+        fwrite(&s1, sizeof(State),1,fp);
+        fwrite(&s2, sizeof(State),1,fp);
+    }
+    fclose(fp);
 }
 
 int main() {
-    
     Create();
     Show();
 
-    string name;
+    string stateToDel;
 
     cout << "Введите название страны для удаления из файла: ";
-    cin >> name;
+    cin >> stateToDel;
 
-    Delete(name);
+    Delete(stateToDel);
+
+    cout << "Результат удвления записи из файла: " << endl;
+    Show();
+
+    Add();
+
+    cout << "Результат добавления двух записей в конец файла: " << endl;
+    Show();
 
     return 0;
 }
